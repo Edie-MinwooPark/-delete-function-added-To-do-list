@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      li {
+        width: 800px;
+        height: 80px;
+      }
+      li > div {
+        width: 150px;
+        height: 80px;
+        border: 1px solid;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .long {
+        width: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="">Date</label>
+    <input type="text" />
+    <label for="">To do</label>
+    <input type="text" />
+    <label for="">Priority</label>
+    <input type="text" />
+
+    <button id="addBtn">추가</button>
+    <button id="delBtn">삭제</button>
+
+    <div id="_div"></div>
+  </body>
+  <script>
+    // 추가 함수
+    function addList() {
+      let inputs = document.querySelectorAll("input");
+      let value = window.localStorage.getItem("게시판");
+      if (window.localStorage.length == 0) {
+        window.localStorage.setItem(
+          "게시판",
+          `{"date" : "${inputs[0].value}", "todo" : "${inputs[1].value}", "priority" : "${inputs[2].value}"}`
+        );
+      } else {
+        window.localStorage.setItem(
+          "게시판",
+          value +
+            "|" +
+            `{"date" : "${inputs[0].value}", "todo" : "${inputs[1].value}", "priority" : "${inputs[2].value}"}`
+        );
+      }
+      render();
+    }
+    let combine;
+    //삭제 함수
+    function delList() {
+        if(window.localStorage.getItem('게시판').includes("|")){
+
+          let inputs = document.querySelectorAll("input");
+          let value = window.localStorage.getItem("게시판"); //마지막것 빼고 추출
+          value = value.split("|");
+          value.pop(value.length - 1);
+          console.log(value)
+          let combinedvalue =value.join('|');
+          console.log(combinedvalue);
+          window.localStorage.removeItem('게시판');
+          window.localStorage.setItem('게시판',combinedvalue);
+          render();
+        }else{
+          window.localStorage.removeItem('게시판');
+          delrender();
+        }
+    }
+    // 삭제 렌더링 함수
+    function delrender(){
+      _div.innerHTML = "";
+      let _ul = document.createElement("ul");
+      let _li = document.createElement("li");
+      let _div1 = document.createElement("div");
+      let _div2 = document.createElement("div");
+      let _div3 = document.createElement("div");
+      _div1.innerHTML = "Date";
+      _div2.innerHTML = "To do";
+      _div2.classList.add("long");
+      _div3.innerHTML = "Priority";
+      _li.style.display = "flex";
+      _li.append(_div1, _div2, _div3);
+      _ul.append(_li);
+      _div.append(_ul);
+    }
+    //렌더링 함수
+    function render() {
+      let _json = window.localStorage.getItem("게시판");
+      // 문자열에서 "|" 문자열마다 잘라서 배열로 변경
+      _json = _json.split("|");
+      _div.innerHTML = "";
+      let _ul = document.createElement("ul");
+      let _li = document.createElement("li");
+      let _div1 = document.createElement("div");
+      let _div2 = document.createElement("div");
+      let _div3 = document.createElement("div");
+      _div1.innerHTML = "Date";
+      _div2.innerHTML = "To do";
+      _div2.classList.add("long");
+      _div3.innerHTML = "Priority";
+      _li.style.display = "flex";
+      _li.append(_div1, _div2, _div3);
+      _ul.append(_li);
+      _json.forEach(function (i) {
+        let _li = document.createElement("li");
+        let _div1 = document.createElement("div");
+        let _div2 = document.createElement("div");
+        let _div3 = document.createElement("div");
+        _div1.innerHTML = JSON.parse(i).date;
+        _div2.innerHTML = JSON.parse(i).todo;
+        _div2.classList.add("long");
+        _div3.innerHTML = JSON.parse(i).priority;
+        _li.style.display = "flex";
+        _li.append(_div1, _div2, _div3);
+        _ul.append(_li);
+      });
+      _div.append(_ul);
+    }
+
+    
+
+    addBtn.addEventListener("click", addList);
+    delBtn.addEventListener("click", delList);
+    if (window.localStorage.length != 0) {
+      render();
+    }
+    // window.localStorage.clear();
+  </script>
+</html>
+
+<!-- 날짜 내용 우선순위 체크박스 -->
+<!--렌더링함수
+    버튼클릭 함수 -->
+
+<!-- 삭제 버튼을 누르면
+        가장 최근 로컬스토리지를 지운것으로 업로드 -->
